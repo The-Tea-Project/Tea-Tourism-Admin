@@ -1,0 +1,14 @@
+{
+  "name": "tea-tourism-admin",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "scripts": {
+    "client": "cd client && npm install && npm run dev",
+    "server": "cd server && npm install && npm run dev",
+    "dev": "npm install && concurrently \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
