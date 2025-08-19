@@ -9,6 +9,7 @@
     "dev": "npm install && concurrently \"npm run server\" \"npm run client\""
   },
   "devDependencies": {
+    "@vitejs/plugin-react-swc": "^4.0.1",
     "concurrently": "^8.2.2"
   }
 }
