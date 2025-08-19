@@ -7,6 +7,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': 'https://theteaprojbackend.vercel.app'
-    }
+    },
+    historyApiFallback: true
   }
 });
