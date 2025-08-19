@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import accomodationRoutes from './routes/accomodation.js';
+import transportRoutes from './routes/transport.js';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/accomodations', accomodationRoutes);
+app.use('/api/transports', transportRoutes);
 
 const PORT = process.env.PORT || 5000;
 
@@ -20,3 +22,5 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch((error) => console.log(error));
+
+export default app;
