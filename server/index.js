@@ -12,6 +12,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+app.get('/', (req, res) => {
+  res.send('Tea Tourism Admin backend is working!');
+});
 app.use('/api/accomodations', accomodationRoutes);
 app.use('/api/transports', transportRoutes);
 
