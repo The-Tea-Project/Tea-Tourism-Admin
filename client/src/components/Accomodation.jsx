@@ -25,7 +25,7 @@ function Accomodation() {
   });
 
   useEffect(() => {
-    axios.get(`/api/accomodations`)
+    axios.get(`${process.env.BACKEND_URL}/api/accomodations`)
       .then(res => setAccomodations(res.data))
       .catch(() => setAccomodations([]));
   }, [showForm]);
@@ -66,7 +66,7 @@ function Accomodation() {
       tags: form.tags.split(',').map(tag => tag.trim()),
       uniqueFeatures: form.uniqueFeatures.split(',').map(f => f.trim())
     };
-    await axios.post(`/api/accomodations`, payload);
+    await axios.post(`${process.env.BACKEND_URL}/api/accomodations`, payload);
     setShowForm(false);
     setForm({
       location: '', category: '', imageUrl: '', priceRange: '', rating: '', reviews: '', title: '', description: '', tags: '', uniqueFeatures: '', whatsapp: '', brochureUrl: ''
@@ -74,7 +74,7 @@ function Accomodation() {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`/api/accomodations/${id}`);
+    await axios.delete(`${process.env.BACKEND_URL}/api/accomodations/${id}`);
     setAccomodations(accomodations.filter(acc => acc._id !== id));
   };
 
