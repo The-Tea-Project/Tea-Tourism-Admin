@@ -23,7 +23,7 @@ function Transport() {
   });
 
   useEffect(() => {
-    axios.get(`${process.env.BACKEND_URL}/api/transports`)
+    axios.get(`/api/transports`)
       .then(res => setTransports(res.data))
       .catch(() => setTransports([]));
   }, [showForm]);
@@ -38,7 +38,7 @@ function Transport() {
       ...form,
       keyFeatures: form.keyFeatures.split(',').map(f => f.trim())
     };
-    await axios.post(`${process.env.BACKEND_URL}/api/transports`, payload);
+    await axios.post(`/api/transports`, payload);
     setShowForm(false);
     setForm({
       title: '', category: '', imageUrl: '', priceRange: '', rating: '', reviews: '', description: '', keyFeatures: '', departureInfo: '', bookingLink: ''
@@ -46,7 +46,7 @@ function Transport() {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`${process.env.BACKEND_URL}/api/transports/${id}`);
+    await axios.delete(`/api/transports/${id}`);
     setTransports(transports.filter(t => t._id !== id));
   };
 
