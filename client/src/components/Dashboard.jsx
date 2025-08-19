@@ -8,9 +8,6 @@ function Dashboard() {
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Admin Dashboard
-        </Typography>
         <Tabs
           value={tab}
           onChange={(_, newValue) => setTab(newValue)}

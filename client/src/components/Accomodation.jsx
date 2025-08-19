@@ -12,16 +12,16 @@ function Accomodation() {
   const [form, setForm] = useState({
     location: '',
     category: '',
-    imageUrl: '',
-    priceRange: '',
-    rating: '',
-    reviews: '',
-    title: '',
-    description: '',
-    tags: '',
-    uniqueFeatures: '',
-    whatsapp: '',
-    bookingLink: ''
+  imageUrl: '',
+  priceRange: '',
+  rating: '',
+  reviews: '',
+  title: '',
+  description: '',
+  tags: '',
+  uniqueFeatures: '',
+  whatsapp: '',
+  brochureUrl: ''
   });
 
   useEffect(() => {
@@ -34,6 +34,31 @@ function Accomodation() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Cloudinary upload for image
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'unsigned upload preset');
+    const res = await axios.post('https://api.cloudinary.com/v1_1/dqsh1wxc6/image/upload', formData);
+    setForm({ ...form, imageUrl: res.data.secure_url });
+  };
+
+  // Cloudinary upload for brochure
+  const handleBrochureUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'unsigned upload preset');
+    const res = await axios.post(
+      'https://api.cloudinary.com/v1_1/dqsh1wxc6/raw/upload',
+      formData
+    );
+    setForm({ ...form, brochureUrl: res.data.secure_url });
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     const payload = {
@@ -44,8 +69,13 @@ function Accomodation() {
     await axios.post('http://localhost:5000/api/accomodations', payload);
     setShowForm(false);
     setForm({
-      location: '', category: '', imageUrl: '', priceRange: '', rating: '', reviews: '', title: '', description: '', tags: '', uniqueFeatures: '', whatsapp: '', bookingLink: ''
+      location: '', category: '', imageUrl: '', priceRange: '', rating: '', reviews: '', title: '', description: '', tags: '', uniqueFeatures: '', whatsapp: '', brochureUrl: ''
     });
+  };
+
+  const handleDelete = async (id) => {
+    await axios.delete(`http://localhost:5000/api/accomodations/${id}`);
+    setAccomodations(accomodations.filter(acc => acc._id !== id));
   };
 
   return (
@@ -63,7 +93,13 @@ function Accomodation() {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}><TextField name="location" label="Location" value={form.location} onChange={handleChange} fullWidth required /></Grid>
               <Grid item xs={12} sm={6}><TextField name="category" label="Category" value={form.category} onChange={handleChange} fullWidth required /></Grid>
-              <Grid item xs={12} sm={6}><TextField name="imageUrl" label="Image URL" value={form.imageUrl} onChange={handleChange} fullWidth required /></Grid>
+              <Grid item xs={12} sm={6}>
+                <Button variant="outlined" component="label" fullWidth>
+                  Upload Image
+                  <input type="file" accept="image/*" hidden onChange={handleImageUpload} />
+                </Button>
+                {form.imageUrl && <Typography variant="caption" color="success.main">Image uploaded</Typography>}
+              </Grid>
               <Grid item xs={12} sm={6}><TextField name="priceRange" label="Price Range" value={form.priceRange} onChange={handleChange} fullWidth required /></Grid>
               <Grid item xs={12} sm={6}><TextField name="rating" label="Rating" type="number" inputProps={{ step: 0.1 }} value={form.rating} onChange={handleChange} fullWidth required /></Grid>
               <Grid item xs={12} sm={6}><TextField name="reviews" label="Number of Reviews" type="number" value={form.reviews} onChange={handleChange} fullWidth required /></Grid>
@@ -72,7 +108,13 @@ function Accomodation() {
               <Grid item xs={12}><TextField name="tags" label="Tags (comma separated)" value={form.tags} onChange={handleChange} fullWidth required /></Grid>
               <Grid item xs={12}><TextField name="uniqueFeatures" label="Unique Features (comma separated)" value={form.uniqueFeatures} onChange={handleChange} fullWidth required /></Grid>
               <Grid item xs={12} sm={6}><TextField name="whatsapp" label="WhatsApp Link" value={form.whatsapp} onChange={handleChange} fullWidth required /></Grid>
-              <Grid item xs={12} sm={6}><TextField name="bookingLink" label="Booking Link" value={form.bookingLink} onChange={handleChange} fullWidth /></Grid>
+              <Grid item xs={12} sm={6}>
+                <Button variant="outlined" component="label" fullWidth>
+                  Upload Brochure (PDF)
+                  <input type="file" accept="application/pdf" hidden onChange={handleBrochureUpload} />
+                </Button>
+                {form.brochureUrl && <Typography variant="caption" color="success.main">Brochure uploaded</Typography>}
+              </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
@@ -84,7 +126,7 @@ function Accomodation() {
       <Grid container spacing={3} mt={2}>
         {accomodations.map(acc => (
           <Grid item xs={12} sm={6} md={4} key={acc._id}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
               <CardMedia
                 component="img"
                 height="160"
@@ -95,13 +137,21 @@ function Accomodation() {
                 <Typography variant="h6" color="primary" gutterBottom>{acc.title}</Typography>
                 <Typography variant="body2" color="text.secondary" gutterBottom>{acc.description}</Typography>
                 <Stack direction="row" spacing={1} mb={1} flexWrap="wrap">
-                  {acc.tags && acc.tags.map((tag, i) => <Chip key={i} label={tag} size="small" color="success" />)}
+                  {acc.tags && acc.tags.map((tag, i) => (
+                    <Box key={i} sx={{ p: 0.5 }}>
+                      <Chip label={tag} size="small" color="success" />
+                    </Box>
+                  ))}
                 </Stack>
                 <Typography variant="subtitle2" color="text.secondary">{acc.location} | {acc.category}</Typography>
                 <Typography variant="subtitle2" color="text.secondary">{acc.priceRange} per night</Typography>
                 <Typography variant="subtitle2" color="text.secondary">Rating: {acc.rating} ({acc.reviews} reviews)</Typography>
                 <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
-                  {acc.uniqueFeatures && acc.uniqueFeatures.map((f, i) => <Chip key={i} label={f} size="small" color="info" />)}
+                  {acc.uniqueFeatures && acc.uniqueFeatures.map((f, i) => (
+                    <Box key={i} sx={{ p: 0.5 }}>
+                      <Chip label={f} size="small" color="info" />
+                    </Box>
+                  ))}
                 </Stack>
                 <Box mt={2} display="flex" alignItems="center" gap={1}>
                   <Button
@@ -112,15 +162,22 @@ function Accomodation() {
                     href={acc.whatsapp}
                     target="_blank"
                   >WhatsApp</Button>
-                  {acc.bookingLink && (
+                  {acc.brochureUrl && (
                     <Button
                       variant="outlined"
                       color="primary"
                       size="small"
-                      href={acc.bookingLink}
+                      href={acc.brochureUrl}
                       target="_blank"
-                    >Booking</Button>
+                    >Download Brochure</Button>
                   )}
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    sx={{ ml: 1 }}
+                    onClick={() => handleDelete(acc._id)}
+                  >Delete</Button>
                 </Box>
               </CardContent>
             </Card>

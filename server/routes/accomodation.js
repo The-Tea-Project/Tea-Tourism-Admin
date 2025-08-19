@@ -27,8 +27,8 @@ router.post('/', async (req, res) => {
       description,
       tags,
       uniqueFeatures,
-      whatsapp,
-      bookingLink
+  whatsapp,
+  brochureUrl
     } = req.body;
     const newAcc = new Accomodation({
       location,
@@ -42,12 +42,24 @@ router.post('/', async (req, res) => {
       tags,
       uniqueFeatures,
       whatsapp,
-      bookingLink
+      brochureUrl
     });
     await newAcc.save();
     res.status(201).json(newAcc);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+
+// Delete accomodation by id
+router.delete('/:id', async (req, res) => {
+  try {
+    const deleted = await Accomodation.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Not found' });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

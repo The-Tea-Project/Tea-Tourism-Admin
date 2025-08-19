@@ -12,7 +12,7 @@ const accomodationSchema = new mongoose.Schema({
   tags: [{ type: String }],
   uniqueFeatures: [{ type: String }],
   whatsapp: { type: String, required: true },
-  bookingLink: { type: String }
+  brochureUrl: { type: String }
 }, { timestamps: true });
 
 export default mongoose.model('Accomodation', accomodationSchema);
