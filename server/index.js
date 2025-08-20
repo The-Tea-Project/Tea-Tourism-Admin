@@ -9,7 +9,10 @@ import transportRoutes from './routes/transport.js';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://theteaprojadmin.vercel.app',
+  credentials: true
+}));
 app.use(express.json());
 
 
