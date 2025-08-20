@@ -11,7 +11,16 @@ dotenv.config();
 const app = express();
 app.use(cors({
   origin: 'https://theteaprojadmin.vercel.app',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+// Handle preflight requests for all routes
+app.options('*', cors({
+  origin: 'https://theteaprojadmin.vercel.app',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 
