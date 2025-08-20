@@ -21,6 +21,7 @@ function Transport() {
     departureInfo: '',
     bookingLink: ''
   });
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     axios.get(`https://theteaprojbackend.vercel.app/api/transports`)
@@ -38,8 +39,15 @@ function Transport() {
       ...form,
       keyFeatures: form.keyFeatures.split(',').map(f => f.trim())
     };
-    await axios.post(`https://theteaprojbackend.vercel.app/api/transports`, payload);
+    if (editId) {
+      await axios.put(`https://theteaprojbackend.vercel.app/api/transports/${editId}`, payload);
+      setTransports(transports.map(t => t._id === editId ? { ...t, ...payload } : t));
+    } else {
+      const res = await axios.post(`https://theteaprojbackend.vercel.app/api/transports`, payload);
+      setTransports([...transports, res.data]);
+    }
     setShowForm(false);
+    setEditId(null);
     setForm({
       title: '', category: '', imageUrl: '', priceRange: '', rating: '', reviews: '', description: '', keyFeatures: '', departureInfo: '', bookingLink: ''
     });
@@ -54,12 +62,12 @@ function Transport() {
     <Box>
       <Box mb={2}>
         <Typography variant="h5" gutterBottom>Transport Experiences</Typography>
-        <Button variant="contained" color="primary" onClick={() => setShowForm(true)} sx={{ mt: 1 }}>
+        <Button variant="contained" color="primary" onClick={() => { setShowForm(true); setEditId(null); setForm({ title: '', category: '', imageUrl: '', priceRange: '', rating: '', reviews: '', description: '', keyFeatures: '', departureInfo: '', bookingLink: '' }); }} sx={{ mt: 1 }}>
           Add New Transport
         </Button>
       </Box>
-      <Dialog open={showForm} onClose={() => setShowForm(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Add New Transport Experience</DialogTitle>
+      <Dialog open={showForm} onClose={() => { setShowForm(false); setEditId(null); }} maxWidth="md" fullWidth>
+        <DialogTitle>{editId ? 'Edit Transport Experience' : 'Add New Transport Experience'}</DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <Grid container spacing={2}>
@@ -76,7 +84,7 @@ function Transport() {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setShowForm(false)}>Close</Button>
+            <Button onClick={() => { setShowForm(false); setEditId(null); }}>Close</Button>
             <Button type="submit" variant="contained" color="primary">Save</Button>
           </DialogActions>
         </form>
@@ -125,6 +133,28 @@ function Transport() {
                     sx={{ ml: 1 }}
                     onClick={() => handleDelete(t._id)}
                   >Delete</Button>
+                  <Button
+                    variant="outlined"
+                    color="info"
+                    size="small"
+                    sx={{ ml: 1 }}
+                    onClick={() => {
+                      setShowForm(true);
+                      setEditId(t._id);
+                      setForm({
+                        title: t.title || '',
+                        category: t.category || '',
+                        imageUrl: t.imageUrl || '',
+                        priceRange: t.priceRange || '',
+                        rating: t.rating || '',
+                        reviews: t.reviews || '',
+                        description: t.description || '',
+                        keyFeatures: Array.isArray(t.keyFeatures) ? t.keyFeatures.join(', ') : t.keyFeatures || '',
+                        departureInfo: t.departureInfo || '',
+                        bookingLink: t.bookingLink || ''
+                      });
+                    }}
+                  >Edit</Button>
                 </Box>
               </CardContent>
             </Card>

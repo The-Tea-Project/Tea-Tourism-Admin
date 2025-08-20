@@ -12,17 +12,18 @@ function Accomodation() {
   const [form, setForm] = useState({
     location: '',
     category: '',
-  imageUrl: '',
-  priceRange: '',
-  rating: '',
-  reviews: '',
-  title: '',
-  description: '',
-  tags: '',
-  uniqueFeatures: '',
-  whatsapp: '',
-  brochureUrl: ''
+    imageUrl: '',
+    priceRange: '',
+    rating: '',
+    reviews: '',
+    title: '',
+    description: '',
+    tags: '',
+    uniqueFeatures: '',
+    whatsapp: '',
+    brochureUrl: ''
   });
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     axios.get(`https://theteaprojbackend.vercel.app/api/accomodations`)
@@ -66,8 +67,15 @@ function Accomodation() {
       tags: form.tags.split(',').map(tag => tag.trim()),
       uniqueFeatures: form.uniqueFeatures.split(',').map(f => f.trim())
     };
-    await axios.post(`https://theteaprojbackend.vercel.app/api/accomodations`, payload);
+    if (editId) {
+      await axios.put(`https://theteaprojbackend.vercel.app/api/accomodations/${editId}`, payload);
+      setAccomodations(accomodations.map(acc => acc._id === editId ? { ...acc, ...payload } : acc));
+    } else {
+      const res = await axios.post(`https://theteaprojbackend.vercel.app/api/accomodations`, payload);
+      setAccomodations([...accomodations, res.data]);
+    }
     setShowForm(false);
+    setEditId(null);
     setForm({
       location: '', category: '', imageUrl: '', priceRange: '', rating: '', reviews: '', title: '', description: '', tags: '', uniqueFeatures: '', whatsapp: '', brochureUrl: ''
     });
@@ -82,12 +90,12 @@ function Accomodation() {
     <Box>
       <Box mb={2}>
         <Typography variant="h5" gutterBottom>Accomodation</Typography>
-        <Button variant="contained" color="primary" onClick={() => setShowForm(true)} sx={{ mt: 1 }}>
+        <Button variant="contained" color="primary" onClick={() => { setShowForm(true); setEditId(null); setForm({ location: '', category: '', imageUrl: '', priceRange: '', rating: '', reviews: '', title: '', description: '', tags: '', uniqueFeatures: '', whatsapp: '', brochureUrl: '' }); }} sx={{ mt: 1 }}>
           Add New Accomodation
         </Button>
       </Box>
-      <Dialog open={showForm} onClose={() => setShowForm(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Add New Accomodation</DialogTitle>
+      <Dialog open={showForm} onClose={() => { setShowForm(false); setEditId(null); }} maxWidth="md" fullWidth>
+        <DialogTitle>{editId ? 'Edit Accomodation' : 'Add New Accomodation'}</DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <Grid container spacing={2}>
@@ -118,7 +126,7 @@ function Accomodation() {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setShowForm(false)}>Close</Button>
+            <Button onClick={() => { setShowForm(false); setEditId(null); }}>Close</Button>
             <Button type="submit" variant="contained" color="primary">Save</Button>
           </DialogActions>
         </form>
@@ -178,6 +186,30 @@ function Accomodation() {
                     sx={{ ml: 1 }}
                     onClick={() => handleDelete(acc._id)}
                   >Delete</Button>
+                  <Button
+                    variant="outlined"
+                    color="info"
+                    size="small"
+                    sx={{ ml: 1 }}
+                    onClick={() => {
+                      setShowForm(true);
+                      setEditId(acc._id);
+                      setForm({
+                        location: acc.location || '',
+                        category: acc.category || '',
+                        imageUrl: acc.imageUrl || '',
+                        priceRange: acc.priceRange || '',
+                        rating: acc.rating || '',
+                        reviews: acc.reviews || '',
+                        title: acc.title || '',
+                        description: acc.description || '',
+                        tags: Array.isArray(acc.tags) ? acc.tags.join(', ') : acc.tags || '',
+                        uniqueFeatures: Array.isArray(acc.uniqueFeatures) ? acc.uniqueFeatures.join(', ') : acc.uniqueFeatures || '',
+                        whatsapp: acc.whatsapp || '',
+                        brochureUrl: acc.brochureUrl || ''
+                      });
+                    }}
+                  >Edit</Button>
                 </Box>
               </CardContent>
             </Card>
