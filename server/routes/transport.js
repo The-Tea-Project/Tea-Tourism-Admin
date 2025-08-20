@@ -1,10 +1,11 @@
 import express from 'express';
 import Transport from '../models/Transport.js';
+import { requireAuth } from '../middleware/requireAuth.js';
 
 const router = express.Router();
 
 // Get all transport experiences
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
   try {
     const transports = await Transport.find();
     res.json(transports);
@@ -14,7 +15,7 @@ router.get('/', async (req, res) => {
 });
 
 // Add new transport experience
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   try {
     const { title, category, imageUrl, priceRange, rating, reviews, description, keyFeatures, departureInfo, bookingLink } = req.body;
     const newTransport = new Transport({ title, category, imageUrl, priceRange, rating, reviews, description, keyFeatures, departureInfo, bookingLink });
@@ -26,7 +27,7 @@ router.post('/', async (req, res) => {
 });
 
 // Delete transport experience by id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
     const deleted = await Transport.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Not found' });

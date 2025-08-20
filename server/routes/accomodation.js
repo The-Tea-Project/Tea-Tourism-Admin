@@ -1,10 +1,11 @@
 import express from 'express';
 import Accomodation from '../models/Accomodation.js';
+import { requireAuth } from '../middleware/requireAuth.js';
 
 const router = express.Router();
 
 // Get all accomodations
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
   try {
     const accomodations = await Accomodation.find();
     res.json(accomodations);
@@ -14,7 +15,7 @@ router.get('/', async (req, res) => {
 });
 
 // Add new accomodation
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   try {
     const {
       location,
@@ -53,7 +54,7 @@ router.post('/', async (req, res) => {
 
 
 // Delete accomodation by id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
     const deleted = await Accomodation.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Not found' });
@@ -64,7 +65,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Update accomodation by id
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireAuth, async (req, res) => {
   try {
     const updated = await Accomodation.findByIdAndUpdate(
       req.params.id,
