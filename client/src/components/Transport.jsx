@@ -24,7 +24,7 @@ function Transport() {
   const [editId, setEditId] = useState(null);
 
   useEffect(() => {
-    axios.get(`https://theteaprojbackend.vercel.app/api/transports`)
+    axios.get(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports`)
       .then(res => setTransports(res.data))
       .catch(() => setTransports([]));
   }, [showForm]);
@@ -40,10 +40,10 @@ function Transport() {
       keyFeatures: form.keyFeatures.split(',').map(f => f.trim())
     };
     if (editId) {
-      await axios.put(`https://theteaprojbackend.vercel.app/api/transports/${editId}`, payload);
+      await axios.put(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports/${editId}`, payload);
       setTransports(transports.map(t => t._id === editId ? { ...t, ...payload } : t));
     } else {
-      const res = await axios.post(`https://theteaprojbackend.vercel.app/api/transports`, payload);
+      const res = await axios.post(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports`, payload);
       setTransports([...transports, res.data]);
     }
     setShowForm(false);
@@ -54,7 +54,7 @@ function Transport() {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`https://theteaprojbackend.vercel.app/api/transports/${id}`);
+    await axios.delete(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports/${id}`);
     setTransports(transports.filter(t => t._id !== id));
   };
 
