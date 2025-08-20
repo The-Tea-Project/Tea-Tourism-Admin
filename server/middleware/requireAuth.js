@@ -1,3 +1,9 @@
-import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
+import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 
-export const requireAuth = ClerkExpressRequireAuth();
+if (!process.env.CLERK_SECRET_KEY) {
+  throw new Error("Missing CLERK_SECRET_KEY in environment");
+}
+
+export const requireAuth = ClerkExpressRequireAuth({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
