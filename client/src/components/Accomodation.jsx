@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '@clerk/clerk-react';
 import {
   Button, Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Grid, Card, CardContent, CardMedia, Typography, Chip, Stack, Box
@@ -7,6 +8,7 @@ import {
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 function Accomodation() {
+  const { getToken } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [accomodations, setAccomodations] = useState([]);
   const [form, setForm] = useState({
@@ -26,10 +28,15 @@ function Accomodation() {
   const [editId, setEditId] = useState(null);
 
   useEffect(() => {
-    axios.get(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations`)
-      .then(res => setAccomodations(res.data))
-      .catch(() => setAccomodations([]));
-  }, [showForm]);
+    (async () => {
+      const token = await getToken();
+      axios.get(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => setAccomodations(res.data))
+        .catch(() => setAccomodations([]));
+    })();
+  }, [showForm, getToken]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -62,16 +69,25 @@ function Accomodation() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    const token = await getToken();
     const payload = {
       ...form,
       tags: form.tags.split(',').map(tag => tag.trim()),
       uniqueFeatures: form.uniqueFeatures.split(',').map(f => f.trim())
     };
     if (editId) {
-      await axios.put(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations/${editId}`, payload);
+      await axios.put(
+        `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations/${editId}`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setAccomodations(accomodations.map(acc => acc._id === editId ? { ...acc, ...payload } : acc));
     } else {
-      const res = await axios.post(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations`, payload);
+      const res = await axios.post(
+        `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setAccomodations([...accomodations, res.data]);
     }
     setShowForm(false);
@@ -82,7 +98,11 @@ function Accomodation() {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations/${id}`);
+    const token = await getToken();
+    await axios.delete(
+      `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations/${id}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     setAccomodations(accomodations.filter(acc => acc._id !== id));
   };
 

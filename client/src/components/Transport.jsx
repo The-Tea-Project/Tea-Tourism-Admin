@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '@clerk/clerk-react';
 import {
   Button, Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Grid, Card, CardContent, CardMedia, Typography, Chip, Stack, Box
@@ -7,6 +8,7 @@ import {
 import StarIcon from '@mui/icons-material/Star';
 
 function Transport() {
+  const { getToken } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [transports, setTransports] = useState([]);
   const [form, setForm] = useState({
@@ -24,10 +26,15 @@ function Transport() {
   const [editId, setEditId] = useState(null);
 
   useEffect(() => {
-    axios.get(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports`)
-      .then(res => setTransports(res.data))
-      .catch(() => setTransports([]));
-  }, [showForm]);
+    (async () => {
+      const token = await getToken();
+      axios.get(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => setTransports(res.data))
+        .catch(() => setTransports([]));
+    })();
+  }, [showForm, getToken]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,15 +42,24 @@ function Transport() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    const token = await getToken();
     const payload = {
       ...form,
       keyFeatures: form.keyFeatures.split(',').map(f => f.trim())
     };
     if (editId) {
-      await axios.put(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports/${editId}`, payload);
+      await axios.put(
+        `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports/${editId}`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setTransports(transports.map(t => t._id === editId ? { ...t, ...payload } : t));
     } else {
-      const res = await axios.post(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports`, payload);
+      const res = await axios.post(
+        `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setTransports([...transports, res.data]);
     }
     setShowForm(false);
@@ -54,7 +70,11 @@ function Transport() {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports/${id}`);
+    const token = await getToken();
+    await axios.delete(
+      `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports/${id}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     setTransports(transports.filter(t => t._id !== id));
   };
 
