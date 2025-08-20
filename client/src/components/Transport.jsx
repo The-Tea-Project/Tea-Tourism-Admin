@@ -28,7 +28,7 @@ function Transport() {
   useEffect(() => {
     (async () => {
       const token = await getToken();
-      axios.get(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports`, {
+      axios.get(`https://theteaprojbackend.vercel.app/api/transports`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => setTransports(res.data))
@@ -49,14 +49,14 @@ function Transport() {
     };
     if (editId) {
       await axios.put(
-        `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports/${editId}`,
+        `https://theteaprojbackend.vercel.app/api/transports/${editId}`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTransports(transports.map(t => t._id === editId ? { ...t, ...payload } : t));
     } else {
       const res = await axios.post(
-        `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports`,
+        `https://theteaprojbackend.vercel.app/api/transports`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -72,7 +72,7 @@ function Transport() {
   const handleDelete = async (id) => {
     const token = await getToken();
     await axios.delete(
-      `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/transports/${id}`,
+      `https://theteaprojbackend.vercel.app/api/transports/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     setTransports(transports.filter(t => t._id !== id));

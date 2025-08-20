@@ -30,7 +30,7 @@ function Accomodation() {
   useEffect(() => {
     (async () => {
       const token = await getToken();
-      axios.get(`https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations`, {
+      axios.get(`https://theteaprojbackend.vercel.app/api/accomodations`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => setAccomodations(res.data))
@@ -77,14 +77,14 @@ function Accomodation() {
     };
     if (editId) {
       await axios.put(
-        `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations/${editId}`,
+        `https://theteaprojbackend.vercel.app/api/accomodations/${editId}`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setAccomodations(accomodations.map(acc => acc._id === editId ? { ...acc, ...payload } : acc));
     } else {
       const res = await axios.post(
-        `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations`,
+        `https://theteaprojbackend.vercel.app/api/accomodations`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -100,7 +100,7 @@ function Accomodation() {
   const handleDelete = async (id) => {
     const token = await getToken();
     await axios.delete(
-      `https://theteaprojbackend-5vt20eep9-someshjoygurus-projects.vercel.app/api/accomodations/${id}`,
+      `https://theteaprojbackend.vercel.app/api/accomodations/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     setAccomodations(accomodations.filter(acc => acc._id !== id));
