@@ -6,31 +6,47 @@ import { AppBar, Toolbar, Typography, Box, Button, Container } from '@mui/materi
 function App() {
   return (
     <>
-      <AppBar position="static" color="default" elevation={2}>
-        <Container maxWidth="md">
-          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
-              Admin Dashboard
-            </Typography>
-            <Box>
-              <SignedIn>
+      <SignedIn>
+        <AppBar position="static" color="default" elevation={2}>
+          <Container maxWidth="md">
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
+                Admin Dashboard
+              </Typography>
+              <Box>
                 <UserButton afterSignOutUrl="/" />
-              </SignedIn>
-              <SignedOut>
-                <Button color="primary" variant="outlined" href="/sign-in">Login / Sign Up</Button>
-              </SignedOut>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
-      <Container maxWidth="md">
-        <SignedIn>
+              </Box>
+            </Toolbar>
+          </Container>
+        </AppBar>
+        <Container maxWidth="md">
           <Dashboard />
-        </SignedIn>
-        <SignedOut>
-          <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
-        </SignedOut>
-      </Container>
+        </Container>
+      </SignedIn>
+      <SignedOut>
+        <Box sx={{ minHeight: '100vh', height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: 'linear-gradient(135deg, #e0f7fa 0%, #fff 100%)' }}>
+          <Typography
+            variant="h4"
+            color="primary"
+            sx={{
+              fontWeight: 700,
+              mb: 4,
+              textAlign: 'center',
+              letterSpacing: 2,
+              textShadow: '0 2px 8px #b2ebf2',
+              cursor: 'pointer',
+              transition: 'color 0.2s',
+              '&:hover': { color: '#00838f' }
+            }}
+            onClick={() => window.location.href = '/sign-in'}
+          >
+            LOGIN / SIGN-UP
+          </Typography>
+          <Box sx={{ width: '100%', maxWidth: 400 }}>
+            <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" afterSignInUrl="/" afterSignUpUrl="/" />
+          </Box>
+        </Box>
+      </SignedOut>
     </>
   );
 }
