@@ -191,14 +191,15 @@ function Accomodation() {
                     target="_blank"
                   >WhatsApp</Button>
                   {acc.brochureUrl && (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      size="small"
-                      href={acc.brochureUrl}
-                      target="_blank"
-                    >Download Brochure</Button>
-                  )}
+                   <a href={acc.brochureUrl} download target="_blank" rel="noopener noreferrer">
+  <Button
+    variant="outlined"
+    color="primary"
+    size="small"
+  >
+    Download Brochure
+  </Button>
+</a>)}
                   <Button
                     variant="outlined"
                     color="error"
