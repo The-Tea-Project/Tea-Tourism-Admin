@@ -1,28 +1,23 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
-dotenv.config();
-
 import accomodationRoutes from './routes/accomodation.js';
 import transportRoutes from './routes/transport.js';
-
-
 const app = express();
-app.use(cors({
-  origin: 'https://theteaprojadmin.vercel.app',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-// Handle preflight requests for all routes
-app.options('*', cors({
-  origin: 'https://theteaprojadmin.vercel.app',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+
+config({
+  path: "./data/config.env",
+});
+
 app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'https://theteaprojadmin.vercel.app'],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 
 app.get('/', (req, res) => {
