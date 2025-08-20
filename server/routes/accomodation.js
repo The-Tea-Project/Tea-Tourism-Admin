@@ -5,7 +5,7 @@ import { requireAuth } from '../middleware/requireAuth.js';
 const router = express.Router();
 
 // Get all accomodations
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const accomodations = await Accomodation.find();
     res.json(accomodations);
