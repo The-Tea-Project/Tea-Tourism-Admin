@@ -19,7 +19,8 @@ app.use(
   cors({
     origin: [
       'http://localhost:5173',
-      'https://theteaprojadmin.vercel.app'
+      'https://theteaprojadmin.vercel.app',
+      'https://theteaproj.vercel.app',
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
