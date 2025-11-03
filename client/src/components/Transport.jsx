@@ -40,6 +40,17 @@ function Transport() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Cloudinary upload for image
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'unsigned upload preset');
+    const res = await axios.post('https://api.cloudinary.com/v1_1/dqsh1wxc6/image/upload', formData);
+    setForm({ ...form, imageUrl: res.data.secure_url });
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     const token = await getToken();
@@ -93,7 +104,13 @@ function Transport() {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}><TextField name="title" label="Title" value={form.title} onChange={handleChange} fullWidth required /></Grid>
               <Grid item xs={12} sm={6}><TextField name="category" label="Category" value={form.category} onChange={handleChange} fullWidth required /></Grid>
-              <Grid item xs={12} sm={6}><TextField name="imageUrl" label="Image URL" value={form.imageUrl} onChange={handleChange} fullWidth required /></Grid>
+              <Grid item xs={12} sm={6}>
+                <Button variant="outlined" component="label" fullWidth>
+                  Upload Image
+                  <input type="file" accept="image/*" hidden onChange={handleImageUpload} />
+                </Button>
+                {form.imageUrl && <Typography variant="caption" color="success.main">Image uploaded</Typography>}
+              </Grid>
               <Grid item xs={12} sm={6}><TextField name="priceRange" label="Price Range" value={form.priceRange} onChange={handleChange} fullWidth required /></Grid>
               <Grid item xs={12} sm={6}><TextField name="rating" label="Rating" type="number" inputProps={{ step: 0.1 }} value={form.rating} onChange={handleChange} fullWidth required /></Grid>
               <Grid item xs={12} sm={6}><TextField name="reviews" label="Number of Reviews" type="number" value={form.reviews} onChange={handleChange} fullWidth required /></Grid>
